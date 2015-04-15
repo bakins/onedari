@@ -6,6 +6,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/bakins/onedari/announce"
+	"github.com/bakins/onedari/dns"
 	"github.com/bakins/onedari/server"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -51,7 +52,7 @@ func main() {
 
 	cmdAnnounce := &cobra.Command{
 		Use:   "announce",
-		Short: "Run service  announcement",
+		Short: "Run service announcement",
 		Run:   runAnnounce,
 	}
 
@@ -67,9 +68,25 @@ func main() {
 	cmdAnnounce.PersistentFlags().StringP("check", "c", "", "app/service check")
 	viper.BindPFlag("check", cmdAnnounce.PersistentFlags().Lookup("check"))
 
+	cmdDNS := &cobra.Command{
+		Use:   "dns",
+		Short: "Run DNS server",
+		Run:   runDNS,
+	}
+
+	cmdDNS.PersistentFlags().StringP("api", "a", dns.DefaultEndpoint, "API endpoint")
+	viper.BindPFlag("api", cmdDNS.PersistentFlags().Lookup("api"))
+
+	cmdDNS.PersistentFlags().Uint32P("ttl", "t", dns.DefaultTTL, "DNS ttl")
+	viper.BindPFlag("ttl", cmdDNS.PersistentFlags().Lookup("ttl"))
+
+	cmdDNS.PersistentFlags().StringP("domain", "d", dns.DefaultDomain, "DNS domain")
+	viper.BindPFlag("domain", cmdDNS.PersistentFlags().Lookup("domain"))
+
 	root.AddCommand(
 		cmdServer,
 		cmdAnnounce,
+		cmdDNS,
 	)
 	_ = root.Execute()
 }

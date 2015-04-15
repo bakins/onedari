@@ -112,6 +112,7 @@ func (s *Server) Run() error {
 	r.GET("/v0/node", s.getLocalNode)
 
 	r.GET("/v0/nodes", s.listNodes)
+	r.GET("/v0/nodes/:id", s.getNode)
 
 	r.PUT("/v0/instances/:id", s.createInstance)
 	r.GET("/v0/instances/:id", s.getInstance)

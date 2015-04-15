@@ -55,3 +55,22 @@ func (s *Server) listNodes(w http.ResponseWriter, r *http.Request, ps httprouter
 	JSON(w, 200, nodes)
 
 }
+
+func (s *Server) getNode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	id := ps[0].Value
+
+	node := &api.Node{}
+
+	if err := s.etcdGet("/nodes/"+id, node); err != nil {
+		code := http.StatusInternalServerError
+
+		if isKeyNotFound(err) {
+			code = http.StatusNotFound
+		}
+		httpError(w, code, err)
+		return
+	}
+
+	node.ID = id
+	_ = JSON(w, http.StatusOK, node)
+}
