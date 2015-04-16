@@ -95,7 +95,7 @@ func (s *Server) createInstance(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	if i.Target == "" && i.Address == nil && i.Node == "" {
+	if i.Address == nil && i.Node == "" {
 		httpError(w, http.StatusExpectationFailed, InvalidInstanceError)
 		return
 	}

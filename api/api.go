@@ -18,7 +18,6 @@ type (
 		Labels  map[string]string `json:"labels"`
 		Address net.IP            `json:"ip"`
 		Port    uint16            `json:"port"`
-		Target  string            `json:"target"`
 		Up      bool              `json:"up"`
 	}
 
