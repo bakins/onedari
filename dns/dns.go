@@ -138,7 +138,7 @@ func (s *Server) ServeDNS(w d.ResponseWriter, r *d.Msg) {
 	queryType, name, err := getQueryType(query)
 
 	if err != nil {
-		s.nameError(w, r, err)
+		s.sendError(w, r, err, d.RcodeNameError)
 		return
 	}
 
@@ -161,15 +161,15 @@ func (s *Server) ServeDNS(w d.ResponseWriter, r *d.Msg) {
 			s.ServiceQuerySRV(name, w, r)
 			return
 		default:
-			s.nameError(w, r, fmt.Errorf("invalid query type for SRV: %s", query))
+			s.sendError(w, r, fmt.Errorf("invalid query type for SRV: %s", query), d.RcodeNameError)
 			return
 		}
 	default:
 		// unknown query type
-		s.nameError(w, r, fmt.Errorf("unhandled query type: %s", qType))
+		s.sendError(w, r, fmt.Errorf("unhandled query type: %s", qType), d.RcodeNameError)
 		return
 	}
 
 	// we shouldn't make it to here
-	s.nameError(w, r, fmt.Errorf("unhandled query: %s", query))
+	s.sendError(w, r, fmt.Errorf("unhandled query: %s", query), d.RcodeNameError)
 }

@@ -7,13 +7,13 @@ import (
 	d "github.com/miekg/dns"
 )
 
-func (s *Server) nameError(w d.ResponseWriter, req *d.Msg, err error) {
+func (s *Server) sendError(w d.ResponseWriter, req *d.Msg, err error, code int) {
 	m := &d.Msg{}
 	m.SetReply(req)
-	m.SetRcode(req, d.RcodeNameError)
+	m.SetRcode(req, code)
 	_ = w.WriteMsg(m)
 
-	// TODO: log error?
+	// TODO: log error? add a logger to options?
 }
 
 func (s *Server) DoHTTP(uri string, v interface{}) error {

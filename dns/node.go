@@ -12,11 +12,11 @@ func (s *Server) NodeQuery(name string, w d.ResponseWriter, r *d.Msg) {
 
 	if err := s.DoHTTP("/v0/nodes/"+name, node); err != nil {
 		fmt.Println(err)
-		s.nameError(w, r, err)
+		s.sendError(w, r, err, d.RcodeServerFailure)
 	}
 	// sanity check
 	if node.Address == nil || node.ID == "" {
-		s.nameError(w, r, fmt.Errorf("invalid node: %s, %s", node.Address, node.ID))
+		s.sendError(w, r, fmt.Errorf("invalid node: %s, %s", node.Address, node.ID), d.RcodeServerFailure)
 		return
 	}
 

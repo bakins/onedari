@@ -13,7 +13,7 @@ func (s *Server) ServiceQueryA(name string, w d.ResponseWriter, r *d.Msg) {
 
 	if err := s.DoHTTP("/v0/services/"+name, service); err != nil {
 		fmt.Println(err)
-		s.nameError(w, r, err)
+		s.sendError(w, r, err, d.RcodeServerFailure)
 	}
 
 	m := &d.Msg{}
@@ -52,7 +52,7 @@ func (s *Server) ServiceQuerySRV(name string, w d.ResponseWriter, r *d.Msg) {
 
 	if err := s.DoHTTP("/v0/services/"+name, service); err != nil {
 		fmt.Println(err)
-		s.nameError(w, r, err)
+		s.sendError(w, r, err, d.RcodeServerFailure)
 	}
 
 	m := &d.Msg{}
