@@ -149,7 +149,7 @@ func (s *Server) ServeDNS(w d.ResponseWriter, r *d.Msg) {
 	case d.TypeA:
 		switch queryType {
 		case ServiceQueryType:
-			//	s.ServiceQueryA(name, w, r)
+			s.ServiceQueryA(name, w, r)
 			return
 		case NodeQueryType:
 			s.NodeQuery(name, w, r)
@@ -158,7 +158,7 @@ func (s *Server) ServeDNS(w d.ResponseWriter, r *d.Msg) {
 	case d.TypeSRV:
 		switch queryType {
 		case ServiceQueryType:
-			//s.ServiceQuerySRV(name, w, r)
+			s.ServiceQuerySRV(name, w, r)
 			return
 		default:
 			s.nameError(w, r, fmt.Errorf("invalid query type for SRV: %s", query))
