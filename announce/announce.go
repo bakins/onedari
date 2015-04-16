@@ -13,6 +13,7 @@ import (
 )
 
 const (
+	// Defaults for Announce.
 	DefaultEndpoint = "http://127.0.0.1:63412"
 )
 

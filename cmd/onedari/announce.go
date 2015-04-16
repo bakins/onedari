@@ -32,8 +32,8 @@ func runAnnounce(cmd *cobra.Command, args []string) {
 		log.Fatal(err)
 	}
 
-	ttl := viper.GetDuration("ttl")
-	interval := viper.GetDuration("interval")
+	ttl := time.Duration(uint32(viper.GetInt("ttl"))) * time.Second
+	interval := time.Duration(uint32(viper.GetInt("interval"))) * time.Second
 
 	if ttl != time.Duration(0) && ttl < interval {
 		log.Fatal("announce ttl must be greater than interval")

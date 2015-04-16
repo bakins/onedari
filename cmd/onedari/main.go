@@ -2,7 +2,6 @@ package main
 
 import (
 	"strings"
-	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/bakins/onedari/announce"
@@ -59,10 +58,10 @@ func main() {
 	cmdAnnounce.PersistentFlags().StringP("api", "a", announce.DefaultEndpoint, "API endpoint")
 	viper.BindPFlag("api", cmdAnnounce.PersistentFlags().Lookup("api"))
 
-	cmdAnnounce.PersistentFlags().DurationP("ttl", "t", 0, "ttl")
+	cmdAnnounce.PersistentFlags().Uint32P("ttl", "t", 0, "ttl")
 	viper.BindPFlag("ttl", cmdAnnounce.PersistentFlags().Lookup("ttl"))
 
-	cmdAnnounce.PersistentFlags().DurationP("interval", "i", 60*time.Second, "announce interval")
+	cmdAnnounce.PersistentFlags().Uint32P("interval", "i", 60, "announce interval")
 	viper.BindPFlag("interval", cmdAnnounce.PersistentFlags().Lookup("interval"))
 
 	cmdAnnounce.PersistentFlags().StringP("check", "c", "", "app/service check")
