@@ -2,10 +2,15 @@ package dns
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/bakins/onedari/api"
 	d "github.com/miekg/dns"
+)
+
+const (
+	defaultMetadataInt = 100
 )
 
 func (s *Server) ServiceQueryA(name string, w d.ResponseWriter, r *d.Msg) {
@@ -78,9 +83,11 @@ func (s *Server) ServiceQuerySRV(name string, w d.ResponseWriter, r *d.Msg) {
 		target := strings.ToLower(strings.Join([]string{instance.Node, "nodes", s.domain}, "."))
 
 		answer := &d.SRV{
-			Hdr:    header,
-			Port:   instance.Port,
-			Target: target,
+			Hdr:      header,
+			Port:     instance.Port,
+			Target:   target,
+			Weight:   getMetadataInt(instance, "weight"),
+			Priority: getMetadataInt(instance, "priority"),
 		}
 
 		m.Answer = append(m.Answer, answer)
@@ -102,4 +109,22 @@ func (s *Server) ServiceQuerySRV(name string, w d.ResponseWriter, r *d.Msg) {
 	// what if we have no instances?? should we return a dns error
 	_ = w.WriteMsg(m)
 
+}
+
+func getMetadataInt(instance *api.Instance, f string) uint16 {
+	v, ok := instance.Metadata[f]
+	if !ok {
+		return defaultMetadataInt
+	}
+
+	if i, ok := v.(uint16); ok {
+		return i
+	}
+
+	if s, ok := v.(string); ok {
+		if i, err := strconv.ParseUint(s, 10, 0); err == nil {
+			return uint16(i)
+		}
+	}
+	return defaultMetadataInt
 }

@@ -13,14 +13,13 @@ type (
 
 	// Instance is a single running instance of an app.
 	Instance struct {
-		ID       string            `json:"id"` // Default is node+app
-		Node     string            `json:"node"`
-		Labels   map[string]string `json:"labels"`
-		Address  net.IP            `json:"ip"`
-		Port     uint16            `json:"port"`
-		Up       bool              `json:"up"`
-		Priority uint16            `json:"priority"`
-		Weight   uint16            `json:"weight"`
+		ID       string                 `json:"id"` // Default is node+app
+		Node     string                 `json:"node"`
+		Labels   map[string]string      `json:"labels"`
+		Address  net.IP                 `json:"ip"`
+		Port     uint16                 `json:"port"`
+		Up       bool                   `json:"up"`
+		Metadata map[string]interface{} `json:"metadata"` // arbitrary metadata.
 	}
 
 	// Node is a "server."
@@ -33,6 +32,7 @@ type (
 // NewInstance creates a new, blank instance.
 func NewInstance() *Instance {
 	return &Instance{
-		Labels: make(map[string]string),
+		Labels:   make(map[string]string),
+		Metadata: make(map[string]interface{}),
 	}
 }
