@@ -68,6 +68,12 @@ func main() {
 	cmdAnnounce.PersistentFlags().StringP("check", "c", "", "app/service check")
 	viper.BindPFlag("check", cmdAnnounce.PersistentFlags().Lookup("check"))
 
+	cmdAnnounce.PersistentFlags().Uint16P("weight", "w", 100, "weight")
+	viper.BindPFlag("weight", cmdAnnounce.PersistentFlags().Lookup("weight"))
+
+	cmdAnnounce.PersistentFlags().Uint16P("priority", "p", 100, "priority")
+	viper.BindPFlag("priority", cmdAnnounce.PersistentFlags().Lookup("priority"))
+
 	cmdDNS := &cobra.Command{
 		Use:   "dns",
 		Short: "Run DNS server",

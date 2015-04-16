@@ -51,6 +51,8 @@ func runAnnounce(cmd *cobra.Command, args []string) {
 
 	i.Port = uint16(viper.GetInt("port"))
 	i.Address = n.Address
+	i.Weight = uint16(viper.GetInt("weight"))
+	i.Priority = uint16(viper.GetInt("priority"))
 
 	_, args = args[0], args[1:]
 	for _, arg := range args {
