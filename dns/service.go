@@ -10,7 +10,8 @@ import (
 )
 
 const (
-	defaultMetadataInt = 100
+	defaultMetadataInt  = 100
+	maxServiceResponses = 3 // UDP max number of responses. TODO: listen on tcp as well.
 )
 
 func (s *Server) ServiceQueryA(name string, w d.ResponseWriter, r *d.Msg) {
@@ -18,7 +19,8 @@ func (s *Server) ServiceQueryA(name string, w d.ResponseWriter, r *d.Msg) {
 
 	if err := s.DoHTTP("/v0/services/"+name, service); err != nil {
 		fmt.Println(err)
-		s.sendError(w, r, err, d.RcodeServerFailure)
+		// need to check if it is not found
+		s.sendError(w, r, err, d.RcodeNameError)
 	}
 
 	m := &d.Msg{}
@@ -47,6 +49,12 @@ func (s *Server) ServiceQueryA(name string, w d.ResponseWriter, r *d.Msg) {
 		m.Answer = append(m.Answer, answer)
 	}
 
+	// we are udp only. need to answer on tcp as well for large responses?
+	if len(m.Answer) > maxServiceResponses {
+		// should we return a random number
+		m.Answer = m.Answer[:maxServiceResponses]
+		//m.Truncated = true
+	}
 	// what if we have no instances?? should we return a dns error
 
 	_ = w.WriteMsg(m)
@@ -112,6 +120,9 @@ func (s *Server) ServiceQuerySRV(name string, w d.ResponseWriter, r *d.Msg) {
 }
 
 func getMetadataInt(instance *api.Instance, f string) uint16 {
+	if instance.Metadata == nil {
+		return defaultMetadataInt
+	}
 	v, ok := instance.Metadata[f]
 	if !ok {
 		return defaultMetadataInt

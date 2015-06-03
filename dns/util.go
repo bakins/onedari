@@ -9,7 +9,6 @@ import (
 
 func (s *Server) sendError(w d.ResponseWriter, req *d.Msg, err error, code int) {
 	m := &d.Msg{}
-	m.SetReply(req)
 	m.SetRcode(req, code)
 	_ = w.WriteMsg(m)
 
