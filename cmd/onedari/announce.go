@@ -13,12 +13,14 @@ import (
 	"github.com/spf13/viper"
 )
 
-type announcement struct {
-	announce *announce.Announce
-	instance *api.Instance
-	ttl      time.Duration
-	check    string
-}
+type (
+	announcement struct {
+		announce *announce.Announce
+		instance *api.Instance
+		ttl      time.Duration
+		check    string
+	}
+)
 
 func runAnnounce(cmd *cobra.Command, args []string) {
 	setLogLevel()
@@ -108,4 +110,23 @@ func (a *announcement) doAnnounce() {
 	if err := a.announce.Announce(a.instance, a.ttl); err != nil {
 		log.Error(err)
 	}
+}
+
+func announceCommand() *cobra.Command {
+
+	cmd := &cobra.Command{
+		Use:   "announce",
+		Short: "Run service announcement",
+		Run:   runAnnounce,
+	}
+
+	cmd.PersistentFlags().StringP("api", "a", announce.DefaultEndpoint, "API endpoint")
+	cmd.PersistentFlags().StringP("check", "c", "", "app/service check")
+	cmd.PersistentFlags().StringP("ip", "", "", "node ip. default is detected.")
+	cmd.PersistentFlags().Uint16P("priority", "p", 100, "priority")
+	cmd.PersistentFlags().Uint16P("weight", "w", 100, "weight")
+	cmd.PersistentFlags().Uint32P("interval", "i", 60, "announce interval")
+	cmd.PersistentFlags().Uint32P("ttl", "t", 0, "ttl")
+
+	return cmd
 }
