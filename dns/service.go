@@ -128,14 +128,10 @@ func getMetadataInt(instance *api.Instance, f string) uint16 {
 		return defaultMetadataInt
 	}
 
-	if i, ok := v.(uint16); ok {
-		return i
+	// should we care about error here? log it?
+	if i, err := strconv.ParseUint(v, 10, 0); err == nil {
+		return uint16(i)
 	}
 
-	if s, ok := v.(string); ok {
-		if i, err := strconv.ParseUint(s, 10, 0); err == nil {
-			return uint16(i)
-		}
-	}
 	return defaultMetadataInt
 }

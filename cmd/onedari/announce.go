@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os/exec"
 	"strings"
 	"time"
@@ -51,8 +52,8 @@ func runAnnounce(cmd *cobra.Command, args []string) {
 
 	i.Port = uint16(viper.GetInt("port"))
 	i.Address = n.Address
-	i.Metadata["weight"] = uint16(viper.GetInt("weight"))
-	i.Metadata["priority"] = uint16(viper.GetInt("priority"))
+	i.Metadata["weight"] = fmt.Sprintf("%d", viper.GetInt("weight"))
+	i.Metadata["priority"] = fmt.Sprintf("%d", viper.GetInt("priority"))
 
 	_, args = args[0], args[1:]
 	for _, arg := range args {
