@@ -56,22 +56,12 @@ func main() {
 	}
 
 	cmdAnnounce.PersistentFlags().StringP("api", "a", announce.DefaultEndpoint, "API endpoint")
-	viper.BindPFlag("api", cmdAnnounce.PersistentFlags().Lookup("api"))
-
-	cmdAnnounce.PersistentFlags().Uint32P("ttl", "t", 0, "ttl")
-	viper.BindPFlag("ttl", cmdAnnounce.PersistentFlags().Lookup("ttl"))
-
-	cmdAnnounce.PersistentFlags().Uint32P("interval", "i", 60, "announce interval")
-	viper.BindPFlag("interval", cmdAnnounce.PersistentFlags().Lookup("interval"))
-
 	cmdAnnounce.PersistentFlags().StringP("check", "c", "", "app/service check")
-	viper.BindPFlag("check", cmdAnnounce.PersistentFlags().Lookup("check"))
-
-	cmdAnnounce.PersistentFlags().Uint16P("weight", "w", 100, "weight")
-	viper.BindPFlag("weight", cmdAnnounce.PersistentFlags().Lookup("weight"))
-
+	cmdAnnounce.PersistentFlags().StringP("ip", "", "", "node ip. default is detected.")
 	cmdAnnounce.PersistentFlags().Uint16P("priority", "p", 100, "priority")
-	viper.BindPFlag("priority", cmdAnnounce.PersistentFlags().Lookup("priority"))
+	cmdAnnounce.PersistentFlags().Uint16P("weight", "w", 100, "weight")
+	cmdAnnounce.PersistentFlags().Uint32P("interval", "i", 60, "announce interval")
+	cmdAnnounce.PersistentFlags().Uint32P("ttl", "t", 0, "ttl")
 
 	cmdDNS := &cobra.Command{
 		Use:   "dns",

@@ -23,15 +23,24 @@ type announcement struct {
 func runAnnounce(cmd *cobra.Command, args []string) {
 	setLogLevel()
 
+	viper.BindPFlag("api", cmd.PersistentFlags().Lookup("api"))
+	viper.BindPFlag("check", cmd.PersistentFlags().Lookup("check"))
+	viper.BindPFlag("interval", cmd.PersistentFlags().Lookup("interval"))
+	viper.BindPFlag("ip", cmd.PersistentFlags().Lookup("ip"))
+	viper.BindPFlag("priority", cmd.PersistentFlags().Lookup("priority"))
+	viper.BindPFlag("ttl", cmd.PersistentFlags().Lookup("ttl"))
+	viper.BindPFlag("weight", cmd.PersistentFlags().Lookup("weight"))
+
 	if len(args) < 1 {
 		log.Fatal("need an app name")
 	}
 
-	app := args[0]
 	n, err := createNode()
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	app := args[0]
 
 	ttl := time.Duration(uint32(viper.GetInt("ttl"))) * time.Second
 	interval := time.Duration(uint32(viper.GetInt("interval"))) * time.Second
