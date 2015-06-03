@@ -11,6 +11,7 @@ import (
 	"golang.org/x/net/context"
 )
 
+// LabelSelector returns true if the given query matches the instance.
 func LabelSelector(query map[string]string) InstanceSelectorFunc {
 	return func(i *api.Instance) bool {
 		if query == nil || len(query) == 0 {
@@ -29,16 +30,20 @@ func LabelSelector(query map[string]string) InstanceSelectorFunc {
 	}
 }
 
+// UpSelector returns true for instances that are "up".
 func UpSelector(i *api.Instance) bool {
 	return i.Up
 }
 
+// NodeSelector returns true only if this instance is on the given node.
+// This is a bit of a hack because of the naive search implementation we use.
 func NodeSelector(n *api.Node) InstanceSelectorFunc {
 	return func(i *api.Instance) bool {
 		return i.Node == n.ID
 	}
 }
 
+// LabelMatches returns true if all the labels in query match label.
 func LabelMatches(labels, query map[string]string) bool {
 	if query == nil || len(query) == 0 {
 		return true

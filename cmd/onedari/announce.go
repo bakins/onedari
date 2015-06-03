@@ -25,13 +25,16 @@ type (
 func runAnnounce(cmd *cobra.Command, args []string) {
 	setLogLevel()
 
-	viper.BindPFlag("api", cmd.PersistentFlags().Lookup("api"))
-	viper.BindPFlag("check", cmd.PersistentFlags().Lookup("check"))
-	viper.BindPFlag("interval", cmd.PersistentFlags().Lookup("interval"))
-	viper.BindPFlag("ip", cmd.PersistentFlags().Lookup("ip"))
-	viper.BindPFlag("priority", cmd.PersistentFlags().Lookup("priority"))
-	viper.BindPFlag("ttl", cmd.PersistentFlags().Lookup("ttl"))
-	viper.BindPFlag("weight", cmd.PersistentFlags().Lookup("weight"))
+	flags := cmd.PersistentFlags()
+
+	viper.BindPFlag("api", flags.Lookup("api"))
+	viper.BindPFlag("check", flags.Lookup("check"))
+	viper.BindPFlag("interval", flags.Lookup("interval"))
+	viper.BindPFlag("ip", flags.Lookup("ip"))
+	viper.BindPFlag("priority", flags.Lookup("priority"))
+	viper.BindPFlag("ttl", flags.Lookup("ttl"))
+	viper.BindPFlag("weight", flags.Lookup("weight"))
+	viper.BindPFlag("port", flags.Lookup("port"))
 
 	if len(args) < 1 {
 		log.Fatal("need an app name")
@@ -124,6 +127,7 @@ func announceCommand() *cobra.Command {
 	cmd.PersistentFlags().StringP("check", "c", "", "app/service check")
 	cmd.PersistentFlags().StringP("ip", "", "", "node ip. default is detected.")
 	cmd.PersistentFlags().Uint16P("priority", "p", 100, "priority")
+	cmd.PersistentFlags().Uint16("port", 0, "instance port")
 	cmd.PersistentFlags().Uint16P("weight", "w", 100, "weight")
 	cmd.PersistentFlags().Uint32P("interval", "i", 60, "announce interval")
 	cmd.PersistentFlags().Uint32P("ttl", "t", 0, "ttl")
