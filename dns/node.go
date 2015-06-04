@@ -11,8 +11,9 @@ func (s *Server) NodeQuery(name string, w d.ResponseWriter, r *d.Msg) {
 	node := &api.Node{}
 
 	if err := s.DoHTTP("/v0/nodes/"+name, node); err != nil {
-		fmt.Println(err)
-		s.sendError(w, r, err, d.RcodeServerFailure)
+		// need to check if it is not found
+		s.sendError(w, r, err, d.RcodeNameError)
+		return
 	}
 	// sanity check
 	if node.Address == nil || node.ID == "" {

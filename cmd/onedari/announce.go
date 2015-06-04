@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os/exec"
 	"strings"
 	"time"
@@ -12,25 +13,39 @@ import (
 	"github.com/spf13/viper"
 )
 
-type announcement struct {
-	announce *announce.Announce
-	instance *api.Instance
-	ttl      time.Duration
-	check    string
-}
+type (
+	announcement struct {
+		announce *announce.Announce
+		instance *api.Instance
+		ttl      time.Duration
+		check    string
+	}
+)
 
 func runAnnounce(cmd *cobra.Command, args []string) {
 	setLogLevel()
+
+	flags := cmd.PersistentFlags()
+
+	viper.BindPFlag("api", flags.Lookup("api"))
+	viper.BindPFlag("check", flags.Lookup("check"))
+	viper.BindPFlag("interval", flags.Lookup("interval"))
+	viper.BindPFlag("ip", flags.Lookup("ip"))
+	viper.BindPFlag("priority", flags.Lookup("priority"))
+	viper.BindPFlag("ttl", flags.Lookup("ttl"))
+	viper.BindPFlag("weight", flags.Lookup("weight"))
+	viper.BindPFlag("port", flags.Lookup("port"))
 
 	if len(args) < 1 {
 		log.Fatal("need an app name")
 	}
 
-	app := args[0]
 	n, err := createNode()
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	app := args[0]
 
 	ttl := time.Duration(uint32(viper.GetInt("ttl"))) * time.Second
 	interval := time.Duration(uint32(viper.GetInt("interval"))) * time.Second
@@ -51,8 +66,8 @@ func runAnnounce(cmd *cobra.Command, args []string) {
 
 	i.Port = uint16(viper.GetInt("port"))
 	i.Address = n.Address
-	i.Metadata["weight"] = uint16(viper.GetInt("weight"))
-	i.Metadata["priority"] = uint16(viper.GetInt("priority"))
+	i.Metadata["weight"] = fmt.Sprintf("%d", viper.GetInt("weight"))
+	i.Metadata["priority"] = fmt.Sprintf("%d", viper.GetInt("priority"))
 
 	_, args = args[0], args[1:]
 	for _, arg := range args {
@@ -98,4 +113,24 @@ func (a *announcement) doAnnounce() {
 	if err := a.announce.Announce(a.instance, a.ttl); err != nil {
 		log.Error(err)
 	}
+}
+
+func announceCommand() *cobra.Command {
+
+	cmd := &cobra.Command{
+		Use:   "announce",
+		Short: "Run service announcement",
+		Run:   runAnnounce,
+	}
+
+	cmd.PersistentFlags().StringP("api", "a", announce.DefaultEndpoint, "API endpoint")
+	cmd.PersistentFlags().StringP("check", "c", "", "app/service check")
+	cmd.PersistentFlags().StringP("ip", "", "", "node ip. default is detected.")
+	cmd.PersistentFlags().Uint16P("priority", "p", 100, "priority")
+	cmd.PersistentFlags().Uint16("port", 0, "instance port")
+	cmd.PersistentFlags().Uint16P("weight", "w", 100, "weight")
+	cmd.PersistentFlags().Uint32P("interval", "i", 60, "announce interval")
+	cmd.PersistentFlags().Uint32P("ttl", "t", 0, "ttl")
+
+	return cmd
 }
